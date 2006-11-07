@@ -5,7 +5,7 @@ use warnings;
 use WWW::Mechanize;
 use Carp qw(carp croak);
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 
 my %lang_pairs = (
@@ -33,29 +33,25 @@ sub new {
     # validate overrides
     my %overrides = @_;
     foreach (keys %overrides) {
-        # Invalid key
+        # Check key; warn if illegal
         carp "Unknown parameter: $_\n" unless exists $defaults{$_};
-        # Invalid value
+        
+        # Check value; warn and delete if illegal
         if ($_ eq 'output' && !exists $output{$overrides{output}}) {
-            my $message = "Invalid value for parameter 'output', " .
-                          "$overrides{output}.\n" .
-                          "Will use the default value instead.\n";
-            carp ($message);
+            carp _message($_, $overrides{$_});
             delete $overrides{$_};
         }
         if ($_ eq 'lang_pair' && !exists $lang_pairs{$overrides{lang_pair}}) {
-            my $message = "Invalid value for parameter 'lang_pair', " .
-                          "$overrides{lang_pair}.\n" .
-                          "Will use the default value instead.\n";
-            carp ($message);
+            carp _message($_, $overrides{$_});
             delete $overrides{$_};
         }
     }
     
+    # Remove invalid parameters
     my %args = (%defaults, %overrides);
+    
     $args{agent} = WWW::Mechanize->new();
     
-    # remove invalid parameters
     my %this;
     @this{@fields} = @args{@fields};
     
@@ -70,7 +66,7 @@ sub translate {
     if (@_ > 0) {
         $string = shift;
     } else {
-        croak "There's nothing to translate\n";
+        croak "Nothing to translate\n";
     }
     
     return '' if ($string eq '');
@@ -133,6 +129,15 @@ sub output_format {
     }
 }
 
+sub _message {
+    my ($key, $value) = @_;
+    
+    my $string = "Invalid value for parameter $key, $value.\n" .
+                 "Will use the default value instead.\n";
+                 
+    return $string;
+}
+
 
 1;
 
@@ -146,7 +151,7 @@ WWW::Translate::interNOSTRUM - Catalan < > Spanish machine translation
 
 =head1 VERSION
 
-Version 0.01 November 6, 2006
+Version 0.02 November 7, 2006
 
 
 =head1 SYNOPSIS

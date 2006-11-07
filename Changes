@@ -1,6 +1,10 @@
 Revision history for Perl extension WWW::Translate::interNOSTRUM.
 
+0.02  November 7, 2006
+
+    * Minor code changes    
+
 0.01  November 6, 2006
 	
-      First version
+    * First version
 
