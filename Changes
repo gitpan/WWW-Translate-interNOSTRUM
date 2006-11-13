@@ -1,5 +1,11 @@
 Revision history for Perl extension WWW::Translate::interNOSTRUM.
 
+0.03  November 13, 2006
+    
+    * Changed the processing of arguments
+    * Changed the double space removal regex to use lookahead and lookbehind
+    * Minor POD changes
+
 0.02  November 7, 2006
 
     * Minor code changes    
