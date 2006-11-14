@@ -4,8 +4,10 @@ use strict;
 use warnings;
 use Carp qw(carp croak);
 use WWW::Mechanize;
+use Encode;
 
-our $VERSION = '0.03';
+
+our $VERSION = '0.04';
 
 
 my %lang_pairs = (
@@ -22,6 +24,7 @@ my %output =     (
 my %defaults =   (
                     lang_pair => 'ca-es',
                     output => 'plain_text',
+                    store_unknown => 0,
                  );
 
 
@@ -31,10 +34,10 @@ sub new {
     # validate overrides
     my %overrides = @_;
     foreach (keys %overrides) {
-        # Check key; warn if illegal
+        # check key; warn if illegal
         carp "Unknown parameter: $_\n" unless exists $defaults{$_};
         
-        # Check value; warn and delete if illegal
+        # check value; warn and delete if illegal
         if ($_ eq 'output' && !exists $output{$overrides{output}}) {
             carp _message($_, $overrides{$_});
             delete $overrides{$_};
@@ -45,13 +48,17 @@ sub new {
         }
     }
     
-    # Replace defaults with overrides
+    # replace defaults with overrides
     my %args = (%defaults, %overrides);
     
-    # Remove invalid parameters
+    # remove invalid parameters
     my @fields = keys %defaults;
     my %this;
     @this{@fields} = @args{@fields};
+    
+    if ($this{store_unknown}) {
+        $this{unknown} = ();
+    }
     
     $this{agent} = WWW::Mechanize->new();
     $this{url} = 'http://www.internostrum.com/welcome.php'; 
@@ -99,6 +106,21 @@ sub translate {
     # remove double spaces
     $translated =~ s/(?<=\S)\s{2}(?=\S)/ /g;
     
+    # store unknown words
+    if ($self->{store_unknown} && $self->{output} eq 'marked_text') {
+        
+        if ($translated =~ /(?:^|\s|\W)\*\w/) {
+        
+            my $source_lang = substr($self->{lang_pair}, 0, 2);
+            my $utf8 = decode('iso-8859-1', $translated);
+            
+            while ($utf8 =~ /(?:^|\s|\W)\*(\w+?)\b/g) {
+                my $detected = encode('iso-8859-1', $1);
+                $self->{unknown}->{$source_lang}->{$detected}++;
+            }
+        }
+    }
+    
     return $translated;
 }
 
@@ -124,6 +146,21 @@ sub output_format {
     }
 }
 
+sub get_unknown {
+    my $self = shift;
+    
+    if (@_ && $self->{store_unknown}) {
+        my $lang_code = shift;
+        if ($lang_code =~ /^(?:es|ca)$/) {
+            return $self->{unknown}->{$lang_code};
+        } else {
+            carp "Invalid language code\n";
+        }
+    } else {
+        carp "I'm not configured to store unknown words\n";
+    }
+}
+
 sub _message {
     my ($key, $value) = @_;
     
@@ -146,7 +183,7 @@ WWW::Translate::interNOSTRUM - Catalan < > Spanish machine translation
 
 =head1 VERSION
 
-Version 0.03 November 13, 2006
+Version 0.04 November 14, 2006
 
 
 =head1 SYNOPSIS
@@ -171,6 +208,15 @@ Version 0.03 November 13, 2006
     # check current output format:
     my $current_format = $engine->output_format();
     
+    # configure a new interNOSTRUM object to store unknown words:
+    my $engine = WWW::Translate::interNOSTRUM->new(
+                                                    output => marked_text,
+                                                    store_unknown => 1,
+                                                  );
+    
+    # get unknown words for source language = Spanish:
+    my $es_unknown_href = $engine->get_unknown('es');
+    
 
 =head1 DESCRIPTION
 
@@ -181,8 +227,8 @@ web server.
 
 interNOSTRUM provides approximate translations of Catalan into Spanish and
 Spanish into Catalan. It generates both the central variant of Oriental
-Catalan (the standard variant used in Catalonia) and, optionally,
-Valencian forms, which follow the recommendations published in 
+Catalan (the standard variant used in Catalonia) and Valencian forms,
+which follow the recommendations published in
 L<http://www.ua.es/spv/assessorament/criteris.pdf>.
 For more information on the Catalan variants, see the References
 below.
@@ -238,6 +284,17 @@ Returns the translation with the unknown words marked with an asterisk.
 
 =back
 
+=item * C<< store_unknown >>
+
+Off by default. If set to a true value, it configures the engine object to store
+in a hash the unknown words and their frequencies during the session.
+You will be able to access this hash later through the get_unknown method.
+If you change the engine language pair in the same session, it will also
+create a separate word list for the new source language.
+
+B<IMPORTANT>: If you activate this setting, then you must also set the 
+B<output> parameter to I<marked_text>. Otherwise, the get_unknown method will
+return an empty hash.
 
 =back
 
@@ -248,6 +305,7 @@ interNOSTRUM engine object:
     my %options = (
                     lang_pair => 'es-ca',
                     output => 'marked_text',
+                    store_unknown => 1,
                   );
 
     my $engine = WWW::Translate::interNOSTRUM->new(%options);
@@ -261,8 +319,8 @@ interNOSTRUM engine object:
 Returns the translation of $string generated by interNOSTRUM.
 $string must be a string of ANSI text, and can contain up to 16,384 characters.
 If the source text isn't encoded as Latin-1, you must convert it to Latin-1
-before sending it to the MT engine. For this task you can use the Encode module
-or the PerlIO layer, if you are reading the text from a file.
+before sending it to the machine translation engine. For this task you can use
+the Encode module or the PerlIO layer, if you are reading the text from a file.
 
 
 =head2 $engine->from_into($lang_pair)
@@ -282,6 +340,27 @@ output format:
 
     $current_format = $engine->output_format();
 
+
+=head2 $engine->get_unknown($lang_code)
+
+If the engine was configured to store unknown words, it returns a reference to
+a hash containing the unknown words (keys) detected during the current machine
+translation session for the specified source language, along with their
+frequencies (values).
+
+The valid values of $lang_code are:
+
+=over 8
+
+=item * C<< ca >>
+
+Source language is Catalan or Valencian.
+
+=item * C<< es >>
+
+Source language is Spanish.
+
+=back
 
 =head1 DEPENDENCIES
 
