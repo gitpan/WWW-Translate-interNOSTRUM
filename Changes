@@ -1,5 +1,9 @@
 Revision history for Perl extension WWW::Translate::interNOSTRUM.
 
+0.05  November 14, 2006
+
+    * Minor code and POD fixes
+
 0.04  November 14, 2006
 
     * Added the store_unknown creation parameter

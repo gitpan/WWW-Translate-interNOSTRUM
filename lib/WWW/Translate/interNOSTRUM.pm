@@ -7,7 +7,7 @@ use WWW::Mechanize;
 use Encode;
 
 
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 
 
 my %lang_pairs = (
@@ -109,12 +109,12 @@ sub translate {
     # store unknown words
     if ($self->{store_unknown} && $self->{output} eq 'marked_text') {
         
-        if ($translated =~ /(?:^|\s|\W)\*\w/) {
+        if ($translated =~ /(?:^|\W)\*\w/) {
         
             my $source_lang = substr($self->{lang_pair}, 0, 2);
             my $utf8 = decode('iso-8859-1', $translated);
             
-            while ($utf8 =~ /(?:^|\s|\W)\*(\w+?)\b/g) {
+            while ($utf8 =~ /(?:^|\W)\*(\w+?)\b/g) {
                 my $detected = encode('iso-8859-1', $1);
                 $self->{unknown}->{$source_lang}->{$detected}++;
             }
@@ -183,7 +183,7 @@ WWW::Translate::interNOSTRUM - Catalan < > Spanish machine translation
 
 =head1 VERSION
 
-Version 0.04 November 14, 2006
+Version 0.05 November 14, 2006
 
 
 =head1 SYNOPSIS
@@ -216,7 +216,7 @@ Version 0.04 November 14, 2006
     
     # get unknown words for source language = Spanish:
     my $es_unknown_href = $engine->get_unknown('es');
-    
+
 
 =head1 DESCRIPTION
 
@@ -241,7 +241,7 @@ below.
 Creates and returns a new WWW::Translate::interNOSTRUM object.
 
     my $engine = WWW::Translate::interNOSTRUM->new();
-    
+
 
 WWW::Translate::interNOSTRUM recognizes the following parameters:
 
@@ -310,7 +310,6 @@ interNOSTRUM engine object:
 
     my $engine = WWW::Translate::interNOSTRUM->new(%options);
 
-                                                    
 
 =head1 METHODS
 
@@ -327,19 +326,13 @@ the Encode module or the PerlIO layer, if you are reading the text from a file.
 
 Changes the engine language pair to $lang_pair.
 When called with no argument, it returns the value of the current engine
-language pair:
-
-    $current_langpair = $engine->from_into();
-
+language pair.
 
 =head2 $engine->output_format($format)
 
 Changes the engine output format to $format.
 When called with no argument, it returns the value of the current engine
-output format:
-
-    $current_format = $engine->output_format();
-
+output format.
 
 =head2 $engine->get_unknown($lang_code)
 
