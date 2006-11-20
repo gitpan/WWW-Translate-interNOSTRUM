@@ -1,5 +1,13 @@
 Revision history for Perl extension WWW::Translate::interNOSTRUM.
 
+0.06  November 20, 2006
+    
+    * Changed the asterisk detection regexp (the previous version didn't detect
+      entries where the first character contained a diacritic mark.)
+    * Included the _fix_source internal routine to fix geminated l problems
+      in the source text before translating.
+      Future versions will include other fixes.
+
 0.05  November 14, 2006
 
     * Minor code and POD fixes

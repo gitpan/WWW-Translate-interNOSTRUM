@@ -7,7 +7,7 @@ use WWW::Mechanize;
 use Encode;
 
 
-our $VERSION = '0.05';
+our $VERSION = '0.06';
 
 
 my %lang_pairs = (
@@ -78,6 +78,8 @@ sub translate {
     }
     
     return '' if ($string eq '');
+    
+    $string = _fix_source($string);
 
     my $mech = $self->{agent};
     
@@ -109,7 +111,7 @@ sub translate {
     # store unknown words
     if ($self->{store_unknown} && $self->{output} eq 'marked_text') {
         
-        if ($translated =~ /(?:^|\W)\*\w/) {
+        if ($translated =~ /(?:^|\W)\*/) {
         
             my $source_lang = substr($self->{lang_pair}, 0, 2);
             my $utf8 = decode('iso-8859-1', $translated);
@@ -127,7 +129,7 @@ sub translate {
 sub from_into {
     my $self = shift;
     
-    if (@_) {    
+    if (@_) {
         my $pair = shift;
         $self->{lang_pair} = $pair if exists $lang_pairs{$pair};
     } else {
@@ -170,6 +172,14 @@ sub _message {
     return $string;
 }
 
+sub _fix_source {
+    my ($string) = @_;
+    
+    # fix geminated l; replace . by chr(183) = hex B7
+    $string =~ s/l\.l/l\xB7l/g;
+    
+    return $string;
+}
 
 1;
 
@@ -183,7 +193,7 @@ WWW::Translate::interNOSTRUM - Catalan < > Spanish machine translation
 
 =head1 VERSION
 
-Version 0.05 November 14, 2006
+Version 0.06 November 20, 2006
 
 
 =head1 SYNOPSIS
@@ -217,7 +227,6 @@ Version 0.05 November 14, 2006
     # get unknown words for source language = Spanish:
     my $es_unknown_href = $engine->get_unknown('es');
 
-
 =head1 DESCRIPTION
 
 interNOSTRUM is a Catalan < > Spanish machine translation engine developed by
@@ -241,7 +250,6 @@ below.
 Creates and returns a new WWW::Translate::interNOSTRUM object.
 
     my $engine = WWW::Translate::interNOSTRUM->new();
-
 
 WWW::Translate::interNOSTRUM recognizes the following parameters:
 
@@ -309,7 +317,6 @@ interNOSTRUM engine object:
                   );
 
     my $engine = WWW::Translate::interNOSTRUM->new(%options);
-
 
 =head1 METHODS
 
