@@ -7,7 +7,7 @@ use WWW::Mechanize;
 use Encode;
 
 
-our $VERSION = '0.06';
+our $VERSION = '0.07';
 
 
 my %lang_pairs = (
@@ -61,6 +61,7 @@ sub new {
     }
     
     $this{agent} = WWW::Mechanize->new();
+    $this{agent}->env_proxy();
     $this{url} = 'http://www.internostrum.com/welcome.php'; 
     
     return bless(\%this, $class);
@@ -193,7 +194,7 @@ WWW::Translate::interNOSTRUM - Catalan < > Spanish machine translation
 
 =head1 VERSION
 
-Version 0.06 November 20, 2006
+Version 0.07 November 28, 2006
 
 
 =head1 SYNOPSIS

@@ -1,5 +1,9 @@
 Revision history for Perl extension WWW::Translate::interNOSTRUM.
 
+0.07  November 28, 2006
+    
+    * Added a line to get proxy specs from the environment.
+
 0.06  November 20, 2006
     
     * Changed the asterisk detection regexp (the previous version didn't detect
