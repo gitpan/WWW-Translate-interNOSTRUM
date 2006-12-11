@@ -1,4 +1,10 @@
-Revision history for Perl extension WWW::Translate::interNOSTRUM.
+Revision history for Perl extension WWW::Translate::interNOSTRUM
+
+0.08  December 10, 2006
+    
+    * Added a warning for the case in which the source text sent to the
+      machine translation engine server is too long.
+    * POD fix: Added the missing quotes to a hash value in the Synopsis.
 
 0.07  November 28, 2006
     

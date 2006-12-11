@@ -7,7 +7,7 @@ use WWW::Mechanize;
 use Encode;
 
 
-our $VERSION = '0.07';
+our $VERSION = '0.08';
 
 
 my %lang_pairs = (
@@ -104,6 +104,10 @@ sub translate {
     if ($response =~
         /spelling\.<\/div>\s*<p class="textonormal">(.+?)<\/p>/s) { 
             $translated = $1;
+    } else {
+        carp "Didn't receive a translation from the interNostrum server.\n" .
+             "Please check the length of the source text.\n";
+        return '';
     }
             
     # remove double spaces
@@ -194,7 +198,7 @@ WWW::Translate::interNOSTRUM - Catalan < > Spanish machine translation
 
 =head1 VERSION
 
-Version 0.07 November 28, 2006
+Version 0.08 December 10, 2006
 
 
 =head1 SYNOPSIS
@@ -221,7 +225,7 @@ Version 0.07 November 28, 2006
     
     # configure a new interNOSTRUM object to store unknown words:
     my $engine = WWW::Translate::interNOSTRUM->new(
-                                                    output => marked_text,
+                                                    output => 'marked_text',
                                                     store_unknown => 1,
                                                   );
     
