@@ -1,5 +1,14 @@
 Revision history for Perl extension WWW::Translate::interNOSTRUM
 
+0.09  February 14, 2006
+
+    * Added more tests.
+    * Changed croaks to carps for the following cases:
+	- The interNOSTRUM server is down => now it shows a warning and returns undef
+	- The user doesn't provide any text to be translated => now it shows a warning
+	  and returns an empty string
+    * Updated the doc to reflect the new behavior in the first case.
+
 0.08  December 10, 2006
     
     * Added a warning for the case in which the source text sent to the

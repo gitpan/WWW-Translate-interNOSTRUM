@@ -2,12 +2,12 @@ package WWW::Translate::interNOSTRUM;
 
 use strict;
 use warnings;
-use Carp qw(carp croak);
+use Carp qw(carp);
 use WWW::Mechanize;
 use Encode;
 
 
-our $VERSION = '0.08';
+our $VERSION = '0.09';
 
 
 my %lang_pairs = (
@@ -75,7 +75,8 @@ sub translate {
     if (@_ > 0) {
         $string = shift;
     } else {
-        croak "Nothing to translate\n";
+        carp "Nothing to translate\n";
+        return '';
     }
     
     return '' if ($string eq '');
@@ -85,7 +86,10 @@ sub translate {
     my $mech = $self->{agent};
     
     $mech->get($self->{url});
-    croak $mech->response->status_line unless $mech->success;
+    unless ($mech->success) {
+        carp $mech->response->status_line;
+        return undef;
+    }
     
     $mech->field("quadretext", $string);
     
@@ -198,7 +202,7 @@ WWW::Translate::interNOSTRUM - Catalan < > Spanish machine translation
 
 =head1 VERSION
 
-Version 0.08 December 10, 2006
+Version 0.09 February 14, 2007
 
 
 =head1 SYNOPSIS
@@ -333,6 +337,8 @@ If the source text isn't encoded as Latin-1, you must convert it to Latin-1
 before sending it to the machine translation engine. For this task you can use
 the Encode module or the PerlIO layer, if you are reading the text from a file.
 
+In case the server is down, it will show a warning and return C<undef>.
+
 
 =head2 $engine->from_into($lang_pair)
 
@@ -382,7 +388,7 @@ Department of Software and Computing Systems (University of Alicante):
 
 L<http://www.dlsi.ua.es/index.cgi?id=eng>
 
-For more information on the variants of Catalan, see:
+For more information on Catalan and its variants, see:
 
 L<http://en.wikipedia.org/wiki/Catalan_language>
 
