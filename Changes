@@ -1,13 +1,21 @@
 Revision history for Perl extension WWW::Translate::interNOSTRUM
 
-0.09  February 14, 2006
+0.10  April 6, 2007
+
+    * Added a See Also section to the documentation.
+    * Minor POD changes.
+    * Minor Readme changes.
+    * Minor fixes in Changes file.
+    * META.yml conforms to spec 1.0.
+
+0.09  February 14, 2007
 
     * Added more tests.
     * Changed croaks to carps for the following cases:
 	- The interNOSTRUM server is down => now it shows a warning and returns undef
 	- The user doesn't provide any text to be translated => now it shows a warning
 	  and returns an empty string
-    * Updated the doc to reflect the new behavior in the first case.
+    * Updated the documentation.
 
 0.08  December 10, 2006
     

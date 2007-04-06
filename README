@@ -4,8 +4,8 @@ WWW-Translate-interNOSTRUM
 Description
 -----------
 interNOSTRUM is a Catalan < > Spanish machine translation engine.
-This module provides an OO interface to the interNOSTRUM engine
-web server.
+This module provides an OO interface to the interNOSTRUM online translation
+engine.
 
 Prerequisites
 -------------
