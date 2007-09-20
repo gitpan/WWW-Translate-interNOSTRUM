@@ -7,7 +7,7 @@ use WWW::Mechanize;
 use Encode;
 
 
-our $VERSION = '0.10';
+our $VERSION = '0.11';
 
 
 my %lang_pairs = (
@@ -202,7 +202,7 @@ WWW::Translate::interNOSTRUM - Catalan < > Spanish machine translation
 
 =head1 VERSION
 
-Version 0.10 April 6, 2007
+Version 0.11 September 20, 2007
 
 
 =head1 SYNOPSIS
