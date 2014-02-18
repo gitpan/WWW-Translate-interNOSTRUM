@@ -10,5 +10,5 @@ WriteMakefile(
     LICENSE           => 'perl',
     ($] >= 5.005 ?     ## Add these new keywords supported since 5.005
       (ABSTRACT_FROM  => 'lib/WWW/Translate/interNOSTRUM.pm', # retrieve abstract from module
-       AUTHOR         => 'Enrique Nell <perl_nell@telefonica.net>') : ()),
+       AUTHOR         => 'Enrique Nell <blas.gordon@gmail.com>') : ()),
 );
